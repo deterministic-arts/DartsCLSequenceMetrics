@@ -2,8 +2,7 @@
 DartsCLSequenceMetrics
 ======================
 
-Distance metrics on sequences in general and strings in
-particular.
+Distance metrics on sequences in general and strings in particular.
 
 - Constant `jaro-winkler-min-prefix-length` `6`
 - Constant `jaro-winkler-prefix-adjustment-scale` `1/10`
