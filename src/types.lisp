@@ -34,12 +34,12 @@ arbitrary array (in particular, into a string)."
 sequence metric function type as is provided by most functions 
 exposed by this package, if they operate on two generic sequences."
   `(function (sequence sequence 
-			  &key (:start1 array-index) (:end1 (or null array-index))
-			       (:start2 array-index) (:end2 (or null array-index))
-				   (:test t) 
-				   (:test-not t) 
-				   (:key t)
-				   ,@additional-keys) ,result))
+              &key (:start1 array-index) (:end1 (or null array-index))
+                   (:start2 array-index) (:end2 (or null array-index))
+                   (:test t) 
+                   (:test-not t) 
+                   (:key t)
+                   ,@additional-keys) ,result))
 
 
 (deftype string-function (result &rest additional-keys)
@@ -47,8 +47,8 @@ exposed by this package, if they operate on two generic sequences."
 sequence metric function type as is provided by most functions 
 exposed by this package, if they operate on two actual strings."
   `(function (string string 
-			  &key (:start1 array-index) (:end1 (or null array-index))
-			       (:start2 array-index) (:end2 (or null array-index))
-				   (:case-sensitive t)
-				   ,@additional-keys)
-			 ,result))
+              &key (:start1 array-index) (:end1 (or null array-index))
+                   (:start2 array-index) (:end2 (or null array-index))
+                   (:case-sensitive t)
+                   ,@additional-keys)
+             ,result))

@@ -40,10 +40,10 @@
   ((:module :src
     :components
     ((:file "package") 
-	 (:file "types" :depends-on ("package"))
-	 (:file "levenshtein" :depends-on ("types"))
-	 (:file "hamming" :depends-on ("types"))
-	 (:file "lcs" :depends-on ("types"))
-	 (:file "jaro-winkler" :depends-on ("types"))
-	 (:file "ngrams" :depends-on ("types"))
-	 ))))
+     (:file "types" :depends-on ("package"))
+     (:file "levenshtein" :depends-on ("types"))
+     (:file "hamming" :depends-on ("types"))
+     (:file "lcs" :depends-on ("types"))
+     (:file "jaro-winkler" :depends-on ("types"))
+     (:file "ngrams" :depends-on ("types"))
+     ))))

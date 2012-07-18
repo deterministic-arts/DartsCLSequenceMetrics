@@ -28,64 +28,64 @@
 
 
 (defun hamming-distance (seq1 seq2 
-						 &key (start1 0) (end1 nil)
-						      (start2 0) (end2 nil)
-						      (test #'eql have-test)
-						      (test-not nil have-test-not)
-						      (key #'identity have-key))
+                         &key (start1 0) (end1 nil)
+                              (start2 0) (end2 nil)
+                              (test #'eql have-test)
+                              (test-not nil have-test-not)
+                              (key #'identity have-key))
   (when (and have-test have-test-not)
-	(error "cannot use ~S and ~S at the same time" :test :test-not))
+    (error "cannot use ~S and ~S at the same time" :test :test-not))
   (let* ((len1 (- (or end1 (length seq1)) start1))
-		 (len2 (- (or end2 (length seq2)) start2))
-		 (min (min len1 len2))
-		 (max (max len1 len2))
-		 (diff (- max min)))
-	(labels ((getplain (seq k) (elt seq k))
-			 (getkey (seq k) (funcall key (elt seq k)))
-			 (noteql (x y) (not (eql x y)))
-			 (matchpos (x y) (not (funcall test x y)))
-			 (matchneg (x y) (funcall test-not x y)))
-	  (declare (inline getplain getkey matchpos matchneg noteql))
-	  (macrolet ((counter (getter test)
-				   `(loop
-					   :repeat min
-					   :for i :upfrom start1 :for e1 = (,getter seq1 i)
-					   :for j :upfrom start2 :for e2 = (,getter seq2 j)
-					   :counting (,test e1 e2))))
-		(+ diff
-		   (if have-key
-			   (if have-test-not
-				   (counter getkey matchneg)
-				   (if have-test 
-					   (counter getkey matchpos)
-					   (counter getkey noteql)))
-			   (if have-test-not
-				   (counter getplain matchneg)
-				   (if have-test
-					   (counter getplain matchpos)
-					   (counter getplain noteql)))))))))
+         (len2 (- (or end2 (length seq2)) start2))
+         (min (min len1 len2))
+         (max (max len1 len2))
+         (diff (- max min)))
+    (labels ((getplain (seq k) (elt seq k))
+             (getkey (seq k) (funcall key (elt seq k)))
+             (noteql (x y) (not (eql x y)))
+             (matchpos (x y) (not (funcall test x y)))
+             (matchneg (x y) (funcall test-not x y)))
+      (declare (inline getplain getkey matchpos matchneg noteql))
+      (macrolet ((counter (getter test)
+                   `(loop
+                       :repeat min
+                       :for i :upfrom start1 :for e1 = (,getter seq1 i)
+                       :for j :upfrom start2 :for e2 = (,getter seq2 j)
+                       :counting (,test e1 e2))))
+        (+ diff
+           (if have-key
+               (if have-test-not
+                   (counter getkey matchneg)
+                   (if have-test 
+                       (counter getkey matchpos)
+                       (counter getkey noteql)))
+               (if have-test-not
+                   (counter getplain matchneg)
+                   (if have-test
+                       (counter getplain matchpos)
+                       (counter getplain noteql)))))))))
 
 
 
 (defun string-hamming-distance (seq1 seq2 
-								&key (start1 0) (end1 nil)
-								     (start2 0) (end2 nil)
-								     (case-sensitive nil))
+                                &key (start1 0) (end1 nil)
+                                     (start2 0) (end2 nil)
+                                     (case-sensitive nil))
 
   (let* ((len1 (- (or end1 (length seq1)) start1))
-		 (len2 (- (or end2 (length seq2)) start2))
-		 (min (min len1 len2))
-		 (max (max len1 len2))
-		 (diff (- max min)))
-	(+ diff
-	   (if case-sensitive
-		   (loop
-			  :repeat min
-			  :for i :upfrom start1
-			  :for j :upfrom start2 
-			  :counting (not (char= (char seq1 i) (char seq2 j))))
-		   (loop
-			  :repeat min
-			  :for i :upfrom start1
-			  :for j :upfrom start2 
-			  :counting (not (char-equal (char seq1 i) (char seq2 j))))))))
+         (len2 (- (or end2 (length seq2)) start2))
+         (min (min len1 len2))
+         (max (max len1 len2))
+         (diff (- max min)))
+    (+ diff
+       (if case-sensitive
+           (loop
+              :repeat min
+              :for i :upfrom start1
+              :for j :upfrom start2 
+              :counting (not (char= (char seq1 i) (char seq2 j))))
+           (loop
+              :repeat min
+              :for i :upfrom start1
+              :for j :upfrom start2 
+              :counting (not (char-equal (char seq1 i) (char seq2 j))))))))
