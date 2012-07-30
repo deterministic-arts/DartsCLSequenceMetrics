@@ -23,12 +23,14 @@
 
 (in-package "DARTS.LIB.SEQUENCE-METRICS")
 
-(declaim (ftype (string-function (integer 0))string-levenshtein-distance))
+(declaim (ftype (string-function (integer 0) (normalized t))
+                string-levenshtein-distance))
 
 (defun string-levenshtein-distance (s1 s2
                                     &key (start1 0) (end1 nil)
                                          (start2 0) (end2 nil)
-                                         (case-sensitive t))
+                                         (case-sensitive t)
+                                         (normalized nil))
   "string-levenshtein-distance S1 S2 &key START1 END1 START2 END2 
                                           CASE-SENSITIVE => DISTANCE
 
@@ -93,17 +95,21 @@ to arbitrary sequences."
         (if case-sensitive 
             (levenloop char=)
             (levenloop char-equal))
-      (aref d m n)))))
+        (if normalized
+            (/ (aref d m n) (max m n))
+            (aref d m n))))))
 
 
-(declaim (ftype (sequence-function (integer 0)) levenshtein-distance))
+(declaim (ftype (sequence-function (integer 0) (normalized t)) 
+                levenshtein-distance))
 
 (defun levenshtein-distance (s1 s2 
                              &key (start1 0) (end1 nil)
                                   (start2 0) (end2 nil)
                                   (test #'eql have-test) 
                                   (test-not nil have-test-not)
-                                  (key #'identity have-key))
+                                  (key #'identity have-key)
+                                  (normalized t))
   "levenshtein-distance S1 S2 &key START1 END1 START2 END2 TEST TEST-NOT KEY => NUMBER
 
 Computes the Levenshtein distance between sequences S1 and S2. The result
@@ -164,4 +170,6 @@ need a version optimized for use with strings."
             (if (or have-test have-key)
                 (levenloop nil (funcall key) (funcall test))
                 (levenloop nil (progn) (eql))))
-        (aref d m n)))))
+        (if normalized 
+            (/ (aref d m n) (max m n))
+            (aref d m n))))))

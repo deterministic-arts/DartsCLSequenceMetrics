@@ -23,8 +23,8 @@
 
 (in-package "DARTS.LIB.SEQUENCE-METRICS")
 
-(declaim (ftype (sequence-function (integer 0)) hamming-distance))
-(declaim (ftype (string-function (integer 0)) string-hamming-distance))
+(declaim (ftype (sequence-function (integer 0) (normalized t)) hamming-distance))
+(declaim (ftype (string-function (integer 0) (normalized t)) string-hamming-distance))
 
 
 (defun hamming-distance (seq1 seq2 
@@ -32,7 +32,8 @@
                               (start2 0) (end2 nil)
                               (test #'eql have-test)
                               (test-not nil have-test-not)
-                              (key #'identity have-key))
+                              (key #'identity have-key)
+                              (normalized nil))
   (when (and have-test have-test-not)
     (error "cannot use ~S and ~S at the same time" :test :test-not))
   (let* ((len1 (- (or end1 (length seq1)) start1))
@@ -52,40 +53,47 @@
                        :for i :upfrom start1 :for e1 = (,getter seq1 i)
                        :for j :upfrom start2 :for e2 = (,getter seq2 j)
                        :counting (,test e1 e2))))
-        (+ diff
-           (if have-key
-               (if have-test-not
-                   (counter getkey matchneg)
-                   (if have-test 
-                       (counter getkey matchpos)
-                       (counter getkey noteql)))
-               (if have-test-not
-                   (counter getplain matchneg)
-                   (if have-test
-                       (counter getplain matchpos)
-                       (counter getplain noteql)))))))))
+        (let ((distance (+ diff
+                           (if have-key
+                               (if have-test-not
+                                   (counter getkey matchneg)
+                                   (if have-test 
+                                       (counter getkey matchpos)
+                                       (counter getkey noteql)))
+                               (if have-test-not
+                                   (counter getplain matchneg)
+                                   (if have-test
+                                       (counter getplain matchpos)
+                                       (counter getplain noteql)))))))
+          (if normalized 
+              (/ distance max) 
+              distance))))))
 
 
 
 (defun string-hamming-distance (seq1 seq2 
                                 &key (start1 0) (end1 nil)
                                      (start2 0) (end2 nil)
-                                     (case-sensitive nil))
+                                     (case-sensitive nil)
+                                     (normalized nil))
 
   (let* ((len1 (- (or end1 (length seq1)) start1))
          (len2 (- (or end2 (length seq2)) start2))
          (min (min len1 len2))
          (max (max len1 len2))
-         (diff (- max min)))
-    (+ diff
-       (if case-sensitive
-           (loop
-              :repeat min
-              :for i :upfrom start1
-              :for j :upfrom start2 
-              :counting (not (char= (char seq1 i) (char seq2 j))))
-           (loop
-              :repeat min
-              :for i :upfrom start1
-              :for j :upfrom start2 
-              :counting (not (char-equal (char seq1 i) (char seq2 j))))))))
+         (diff (- max min))
+         (distance (+ diff
+                      (if case-sensitive
+                          (loop
+                             :repeat min
+                             :for i :upfrom start1
+                             :for j :upfrom start2 
+                             :counting (not (char= (char seq1 i) (char seq2 j))))
+                          (loop
+                             :repeat min
+                             :for i :upfrom start1
+                             :for j :upfrom start2 
+                             :counting (not (char-equal (char seq1 i) (char seq2 j))))))))
+    (if normalized
+        (/ distance max)
+        distance)))

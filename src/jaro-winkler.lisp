@@ -71,7 +71,7 @@
                      :do (incf count)
                      :finally (return-from count-transpositions count))))
     
-      (labels ((find-common-chars  (str1 str2 distance)
+      (labels ((find-common-chars  (str1 len1 str2 len2 distance)
                  (declare (type string str1 str2)
                           (type (integer 0) distance))
                  (if case-sensitive
@@ -87,8 +87,8 @@
            (if (zerop len1)
                (if (zerop len2) 1 0)
                (let* ((halflen (multiple-value-call #'+ (floor smallest 2)))
-                      (common1 (find-common-chars str1 str2 halflen))
-                      (common2 (find-common-chars str2 str1 halflen))
+                      (common1 (find-common-chars str1 len1 str2 len2 halflen))
+                      (common2 (find-common-chars str2 len2 str1 len1 halflen))
                       (clen1 (fill-pointer common1)) 
                       (clen2 (fill-pointer common2)))
                  (if (or (= 0 clen1) (= 0 clen2) (/= clen1 clen2)) 0
@@ -169,7 +169,7 @@
              (gete (seq n)
                (funcall key (elt seq n)))
              
-             (find-common-characters (str1 str2 distance)
+             (find-common-characters (str1 len1 str2 len2 distance)
                (let ((exclude (make-array len2 :element-type 'bit :initial-element 0 :adjustable nil :fill-pointer nil))
                      (buffer (make-array smallest :element-type 't :fill-pointer 0 :adjustable t)))
                  (loop 
@@ -198,8 +198,8 @@
          (if (zerop len1)
              (if (zerop len2) 1 0)
              (let* ((halflen (multiple-value-call #'+ (floor smallest 2)))
-                    (common1 (find-common-characters str1 str2 halflen))
-                    (common2 (find-common-characters str2 str1 halflen))
+                    (common1 (find-common-characters str1 len1 str2 len2 halflen))
+                    (common2 (find-common-characters str2 len2 str1 len1 halflen))
                     (clen1 (fill-pointer common1)) 
                     (clen2 (fill-pointer common2)))
                (if (or (= 0 clen1) (= 0 clen2) (/= clen1 clen2)) 0
