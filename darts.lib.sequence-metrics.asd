@@ -31,7 +31,7 @@
   :name "darts.lib.sequence-metrics"
   :author "Dirk Esser"
   :version "0.1"
-  :maintainer "Dirk Eßer"
+  :maintainer "Dirk Esser"
   :licence "MIT"
   :description "Provides various distance metrics on sequences"
   :long-description ""
